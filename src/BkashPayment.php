@@ -43,7 +43,7 @@ trait BkashPayment
         return $data->id_token;
     }
 
-    public function createPayment($amount, $invoice_number = null)
+    public function createPayment($amount, $invoice_number = null, $dynamic_callback_url = null)
     {
         $response = Http::acceptJson()
             ->contentType('application/json')
@@ -58,7 +58,7 @@ trait BkashPayment
                 "intent"                => "sale",
                 "mode"                  => "0011",
                 "payerReference"        => "222",
-                "callbackURL"           => $this->getCallbackUrl(),
+                "callbackURL"           => $dynamic_callback_url ?? $this->getCallbackUrl(),
             ]);
 
        return $response->object();
