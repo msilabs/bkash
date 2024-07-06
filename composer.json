@@ -1,0 +1,40 @@
+{
+  "name": "msilabs/bkash",
+  "description": "bKash Payment Gateway API for Laravel Framework.",
+  "keywords": [
+    "bKash",
+    "bKash laravel",
+    "payment gateway",
+    "laravel-package"
+  ],
+  "homepage": "https://github.com/msilabs/bkash",
+  "type": "library",
+  "license": "MIT",
+  "support": {
+    "issues": "https://github.com/msilabs/bkash/issues",
+    "source": "https://github.com/msilabs/bkash"
+  },
+  "authors": [
+    {
+      "name": "msisaif",
+      "email": "msi313.bd@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^7.4|^8.0|^8.1|^8.2",
+    "illuminate/support": "^6|^7|^8|^9|^10"
+  },
+  "autoload": {
+    "psr-4": {
+      "Msilabs\\Bkash\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Msilabs\\Bkash\\BkashServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev"
+}
