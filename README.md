@@ -2,6 +2,7 @@
   <a href="https://packagist.org/packages/msilabs/bkash"><img src="https://img.shields.io/packagist/dt/msilabs/bkash" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/msilabs/bkash"><img src="https://img.shields.io/packagist/v/msilabs/bkash" alt="Latest Stable Version"></a>
   <a href="https://packagist.org/packages/msilabs/bkash"><img src="https://img.shields.io/packagist/l/msilabs/bkash" alt="License"></a>
+  <a href="https://packagist.org/packages/msilabs/bkash"><img src="https://img.shields.io/github/stars/msilabs/bkash" alt="Github Stars"></a>
 </p>
 
 # msilas/bkash
