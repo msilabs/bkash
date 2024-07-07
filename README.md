@@ -78,7 +78,7 @@ use use Msilabs\Bkash\BkashPayment;
 create payment
 
 ```
-@method public $this->createPayment($amount, $invoice_id = null)
+@method public $this->createPayment($amount, $invoice_id = null, $dynamic_callback_url = null)
 ```
 
 execute payment
