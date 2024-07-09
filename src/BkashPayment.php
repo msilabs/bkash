@@ -8,9 +8,7 @@ trait BkashPayment
 {
     protected function getCallbackUrl()
     {
-        return config('bkash.sandbox')
-            ? url("/bkash-sandbox/execute-payment")
-            : url(config('bkash.callback_url'));
+        return url(config('bkash.callback_url'));;
     }
 
     protected function getFullUrl($url)
@@ -76,6 +74,6 @@ trait BkashPayment
                 'paymentID' => $payment_id,
             ]);
 
-       return $response->json();
+       return $response->object();
     }
 }

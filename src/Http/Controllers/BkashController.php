@@ -12,7 +12,7 @@ class BkashController extends Controller
 
     public function createSandboxPayment()
     {
-        return $this->createPayment(10);
+        return $this->createPayment(10, null, url("/bkash-sandbox/execute-payment"));
     }
 
     public function executeSandboxPayment()
