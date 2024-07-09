@@ -3,6 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Msilabs\Bkash\Http\Controllers\BkashController;
 
-Route::post('/bkash/create-payment/{amount}/{invoice_number?}', [BkashController::class, 'createPayment']);
+Route::get('/bkash-sandbox/create-payment', [BkashController::class, 'createSandboxPayment']);
 
-Route::post('/bkash/execute-payment/{payment_id}', [BkashController::class, 'executePayment']);
+Route::get('/bkash-sandbox/execute-payment', [BkashController::class, 'executeSandboxPayment']);
