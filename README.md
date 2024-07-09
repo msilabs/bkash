@@ -57,7 +57,61 @@ To get execute-payment data visit `/bkash-sandbox/execute-payment` url
 http://127.0.0.1:8000/bkash-sandbox/execute-payment
 ```
 
-## Production Uses
+## Sandbox Uses
+
+included BkashPayment trait in your controller. like:
+```
+use Msilabs\Bkash\BkashPayment;
+
+class BkashController extends Controller
+{
+  use BkashPayment;
+
+  //
+}
+```
+
+create payment
+
+```
+public function payment()
+{
+  // your code 
+
+  $response = $this->createPayment($amount, $invoice_id = null, $dynamic_callback_url = null);
+
+  if($response->bkashURL) {
+    return redirect($response->bkashURL);
+  }
+}
+
+```
+
+execute payment
+
+```
+public function callback(Request $request)
+{
+  $payment_id = $request->paymentID;
+  $status = $request->status;
+
+  if($paymentID && $status == 'success') {
+      $response = $this->executePayment($paymentID);
+
+      if($response->transactionStatus == 'Completed') {
+          $order_id = $response['merchantInvoiceNumber'];
+          $trxID = $response['trxID'];
+
+          // your code
+      }
+
+  }
+
+  // your code
+}
+```
+
+## Production Use
 
 set Live Credentials in .env
 
@@ -68,21 +122,4 @@ BKASH_APP_SECRET=""
 BKASH_USERNAME=""
 BKASH_PASSWORD=""
 BKASH_CALLBACK_URL=""
-```
-
-included BkashPayment trait in your controller
-```
-use use Msilabs\Bkash\BkashPayment;
-```
-
-create payment
-
-```
-@method public $this->createPayment($amount, $invoice_id = null, $dynamic_callback_url = null)
-```
-
-execute payment
-
-```
-@method public $this->executePayment($payment_id)
 ```
