@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Msilabs\Bkash\BkashPayment;
 
-class BkashController extends Controller
+class BkashSandboxController extends Controller
 {
     use BkashPayment;
 
@@ -18,7 +18,7 @@ class BkashController extends Controller
     public function executeSandboxPayment()
     {
         if(!request()->paymentID) {
-            return redirect($this->createPayment(10)->bkashURL);
+            return redirect($this->createPayment(10, null, url("/bkash-sandbox/execute-payment")->bkashURL);
         }
 
         return $this->executePayment(request()->paymentID);
