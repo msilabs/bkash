@@ -18,7 +18,7 @@ class BkashSandboxController extends Controller
     public function executeSandboxPayment()
     {
         if(!request()->paymentID) {
-            return redirect($this->createPayment(10, null, url("/bkash-sandbox/execute-payment")->bkashURL);
+            return redirect($this->createPayment(10, null, url("/bkash-sandbox/execute-payment"))->bkashURL);
         }
 
         return $this->executePayment(request()->paymentID);
