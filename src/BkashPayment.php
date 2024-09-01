@@ -20,14 +20,9 @@ trait BkashPayment
         }
     }
 
-    protected function getCallbackUrl()
-    {
-        return "http://127.0.0.1:8000/bkash/callback/" . $this->getAccount();
-    }
-
     protected function getFullUrl($url)
     {
-        $base_url = config('bkash.sandbox')
+        $base_url = config("bkash.accounts.{$account}.sandbox")
             ? config('bkash.sandbox_url')
             : config('bkash.base_url');
     
@@ -126,16 +121,40 @@ trait BkashPayment
 
     public function executePayment($payment_id)
     {
-        $response = Http::acceptJson()
-            ->contentType('application/json')
-            ->withHeaders([
-                "Authorization" => $this->getToken(),
-                "X-App-Key"     => config('bkash.app_key'),
-            ])
-            ->post($this->getFullUrl("/tokenized/checkout/execute"), [
-                'paymentID' => $payment_id,
-            ]);
+        // Ensure the account is set before trying to get its config
+        $account = $this->getAccount();
 
-       return $response->object();
+        if (!$account) {
+            throw new \ErrorException("No bKash account has been set.");
+        }
+
+        try {
+            $response = Http::acceptJson()
+                ->contentType('application/json')
+                ->withHeaders([
+                    "Authorization" => $this->getToken(),
+                    "X-App-Key"     => config("bkash.accounts.{$account}.app_key"),
+                ])
+                ->post($this->getFullUrl("/tokenized/checkout/execute"), [
+                    'paymentID' => $payment_id,
+                ]);
+    
+            if (!$response->successful()) {
+                throw new \ErrorException("bKash API request failed with status code: " . $response->status());
+            }
+    
+            $data = $response->object();
+    
+            if (!isset($data->status)) {
+                throw new \ErrorException("Payment execution failed. No status received.");
+            }
+    
+            return $data;
+    
+        } catch (\Exception $e) {
+            // Handle exceptions that may occur during the HTTP request
+            throw new \ErrorException("Error executing payment: " . $e->getMessage());
+        }
     }
+    
 }
