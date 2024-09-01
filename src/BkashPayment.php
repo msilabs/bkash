@@ -6,9 +6,23 @@ use Illuminate\Support\Facades\Http;
 
 trait BkashPayment
 {
+    private static $account = 'primary';
+
+    protected function getAccount()
+    {
+        return self::$account;
+    }
+
+    protected function setAccount($account)
+    {
+        if (config()->has("bkash.accounts.{$account}")) {
+            self::$account = $account;
+        }
+    }
+
     protected function getCallbackUrl()
     {
-        return url(config('bkash.callback_url'));;
+        return "http://127.0.0.1:8000/bkash/callback/" . $this->getAccount();
     }
 
     protected function getFullUrl($url)
@@ -25,41 +39,89 @@ trait BkashPayment
 
     public function getToken()
     {
-        $response = Http::acceptJson()
-            ->contentType('application/json')
-            ->withHeaders([
-                "username" => config('bkash.username'),
-                "password" => config('bkash.password'),
-            ])
-            ->post($this->getFullUrl("/tokenized/checkout/token/grant"), [
-                "app_key"       => config('bkash.app_key'),
-                "app_secret"    => config('bkash.app_secret'),
-            ]);
+        // Ensure the account is set before trying to get its config
+        $account = $this->getAccount();
     
-        $data = $response->object();
+        if (!$account) {
+            throw new \ErrorException("No bKash account has been set.");
+        }
     
-        return $data->id_token;
+        try {
+            $response = Http::acceptJson()
+                ->contentType('application/json')
+                ->withHeaders([
+                    "username"  => config("bkash.accounts.{$account}.username"),
+                    "password"  => config("bkash.accounts.{$account}.password"),
+                ])
+                ->post($this->getFullUrl("/tokenized/checkout/token/grant"), [
+                    "app_key"       => config("bkash.accounts.{$account}.app_key"),
+                    "app_secret"    => config("bkash.accounts.{$account}.app_secret"),
+                ]);
+    
+            // Check if the response status is 200 (OK)
+            if (!$response->successful()) {
+                throw new \ErrorException("bKash API request failed with status code: " . $response->status());
+            }
+    
+            $data = $response->object();
+    
+            if (!isset($data->id_token)) {
+                throw new \ErrorException("bKash token not found in the response.");
+            }
+    
+            return $data->id_token;
+    
+        } catch (\Exception $e) {
+            // Handle any exceptions that may occur during the HTTP request
+            throw new \ErrorException("Error retrieving bKash token: " . $e->getMessage());
+        }
     }
 
-    public function createPayment($amount, $invoice_number = null, $dynamic_callback_url = null)
+    public function createPayment($amount, $invoice_number, $callback_url)
     {
-        $response = Http::acceptJson()
-            ->contentType('application/json')
-            ->withHeaders([
-                "Authorization" => $this->getToken(),
-                "X-App-Key"     => config('bkash.app_key'),
-            ])
-            ->post($this->getFullUrl("/tokenized/checkout/create"), [
-                "amount"                => $amount, 
-                "currency"              => "BDT",
-                "merchantInvoiceNumber" => (string) ($invoice_number ?? (time() . uniqid())),
-                "intent"                => "sale",
-                "mode"                  => "0011",
-                "payerReference"        => "222",
-                "callbackURL"           => $dynamic_callback_url ?? $this->getCallbackUrl(),
-            ]);
+        // Ensure the account is set before trying to get its config
+        $account = $this->getAccount();
 
-       return $response->object();
+        if (!$account) {
+            throw new \ErrorException("No bKash account has been set.");
+        }
+
+        try {
+            $response = Http::acceptJson()
+                ->contentType('application/json')
+                ->withHeaders([
+                    "Authorization" => $this->getToken(),
+                    "X-App-Key"     => config("bkash.accounts.{$account}.app_key"),
+                ])
+                ->post($this->getFullUrl("/tokenized/checkout/create"), [
+                    "amount"                => $amount, 
+                    "currency"              => "BDT",
+                    "merchantInvoiceNumber" => (string) ($invoice_number),
+                    "intent"                => "sale",
+                    "mode"                  => "0011",
+                    "payerReference"        => "222",
+                    "callbackURL"           => $callback_url,
+                ]);
+
+            if (!$response->successful()) {
+                throw new \ErrorException("bKash API request failed with status code: " . $response->status());
+            }
+
+            $data = $response->object();
+
+            if (!isset($data->paymentID)) {
+                throw new \ErrorException("Payment creation failed. No payment ID received.");
+            }
+
+            if (!isset($data->bkashURL)) {
+                throw new \ErrorException("Payment creation failed. No bkash URL received.");
+            }
+
+            return $data;
+        } catch (\Exception $e) {
+            // Handle exceptions that may occur during the HTTP request
+            throw new \ErrorException("Error creating payment: " . $e->getMessage());
+        }
     }
 
     public function executePayment($payment_id)

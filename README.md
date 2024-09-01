@@ -11,7 +11,7 @@ bKash Payment Gateway API for Laravel Framework.
 
 ## Requirements
 
-- PHP >=7.4
+- PHP >= 7.4
 - Laravel >= 6
 
 ## Get Started
@@ -36,8 +36,8 @@ BKASH_APP_KEY=""
 BKASH_APP_SECRET=""
 BKASH_USERNAME=""
 BKASH_PASSWORD=""
-BKASH_CALLBACK_URL=""
 ```
+
 ## Sandbox validation
 Start local server.
 
@@ -45,19 +45,19 @@ Start local server.
 php artisan serve
 ```
 
-To get create-payment data visit `/bkash-sandbox/create-payment` url
+To get create-payment data visit `/bkash-sandbox-validation/create-payment` url
 
 ```
-http://127.0.0.1:8000/bkash-sandbox/create-payment
+http://127.0.0.1:8000/bkash-sandbox-validation/create-payment
 ```
 
-To get execute-payment data visit `/bkash-sandbox/execute-payment` url
+To get execute-payment data visit `/bkash-sandbox-validation/execute-payment` url
 
 ```
-http://127.0.0.1:8000/bkash-sandbox/execute-payment
+http://127.0.0.1:8000/bkash-sandbox-validation/execute-payment
 ```
 
-## Sandbox Uses
+## Uses
 
 included BkashPayment trait in your controller. like:
 ```
@@ -78,11 +78,9 @@ public function payment()
 {
   // your code 
 
-  $response = $this->createPayment($amount, $invoice_id = null, $dynamic_callback_url = null);
+  $response = $this->createPayment($amount, $invoice_id, $callback_url);
 
-  if($response->bkashURL) {
-    return redirect($response->bkashURL);
-  }
+  return redirect($response->bkashURL);
 }
 
 ```
@@ -121,5 +119,28 @@ BKASH_APP_KEY=""
 BKASH_APP_SECRET=""
 BKASH_USERNAME=""
 BKASH_PASSWORD=""
-BKASH_CALLBACK_URL=""
+```
+
+## Multiple Account
+
+add account/s in config/bkash.php example: 
+
+```bash
+"accounts" => [
+    "primary" => [
+        "sandbox"       => env("BKASH_SANDBOX", true),  #for production use false
+        "app_key"       => env("BKASH_APP_KEY"),
+        "app_secret"    => env("BKASH_APP_SECRET"),
+        "username"      => env("BKASH_USERNAME"),
+        "password"      => env("BKASH_PASSWORD"),
+    ],
+    "secondary" => [
+        "sandbox"       => env("BKASH_SECONDARY_SANDBOX", true),  #for production use false
+        "app_key"       => env("BKASH_SECONDARY_APP_KEY"),
+        "app_secret"    => env("BKASH_SECONDARY_APP_SECRET"),
+        "username"      => env("BKASH_SECONDARY_USERNAME"),
+        "password"      => env("BKASH_SECONDARY_PASSWORD"),
+    ],
+    // Add more stores if you need
+],
 ```

@@ -4,14 +4,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Sandbox : true for sandbox, false for production
-    |--------------------------------------------------------------------------
-    */
-
-    "sandbox" => env("BKASH_SANDBOX", true),
-
-    /*
-    |--------------------------------------------------------------------------
     | Base Url
     |--------------------------------------------------------------------------
     */
@@ -28,29 +20,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | bKash APP KEY & APP SECRET
+    | bKash accounts
     |--------------------------------------------------------------------------
     */
 
-    "app_key" => env("BKASH_APP_KEY"),
-
-    "app_secret" => env("BKASH_APP_SECRET"),
-
-    /*
-    |--------------------------------------------------------------------------
-    | bKash Username & Password
-    |--------------------------------------------------------------------------
-    */
-
-    "username" => env("BKASH_USERNAME"),
-
-    "password" => env("BKASH_PASSWORD"),
-
-    /*
-    |--------------------------------------------------------------------------
-    | callback url : your website url
-    |--------------------------------------------------------------------------
-    */
-    
-    "callback_url"     => env("BKASH_CALLBACK_URL", "http://127.0.0.1:8000/bkash/callback"),
+    "accounts" => [
+        "primary" => [
+            "sandbox"       => env("BKASH_SANDBOX", true),  #for production use false
+            "app_key"       => env("BKASH_APP_KEY"),
+            "app_secret"    => env("BKASH_APP_SECRET"),
+            "username"      => env("BKASH_USERNAME"),
+            "password"      => env("BKASH_PASSWORD"),
+        ],
+        // Add more stores if you need
+    ],
 ];

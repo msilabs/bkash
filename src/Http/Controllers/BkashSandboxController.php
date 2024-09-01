@@ -10,17 +10,29 @@ class BkashSandboxController extends Controller
 {
     use BkashPayment;
 
-    public function createSandboxPayment()
+    public function createSandboxPayment($account = 'primary')
     {
+        $this->setAccount($account);
+
         return $this->createPayment(10, null, url("/bkash-sandbox/execute-payment"));
     }
 
-    public function executeSandboxPayment()
+    public function executeSandboxPayment($account = 'primary')
     {
-        if(!request()->paymentID) {
-            return redirect($this->createPayment(10, null, url("/bkash-sandbox/execute-payment"))->bkashURL);
+        $this->setAccount($account);
+
+        $paymentID = request()->paymentID;
+
+        if(!$paymentID) {
+            $invoice_number = (string) (time() . uniqid());
+
+            $callback_url = url("/bkash-sandbox/execute-payment/" . $this->getAccount());
+
+            $data = $this->createPayment(10, $invoice_number, $callback_url);
+
+            return redirect($data->bkashURL);
         }
 
-        return $this->executePayment(request()->paymentID);
+        return $this->executePayment($paymentID);
     }
 }
