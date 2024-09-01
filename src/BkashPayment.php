@@ -132,10 +132,6 @@ trait BkashPayment
     
             $data = $response->object();
     
-            if (!isset($data->status)) {
-                throw new \ErrorException("Payment execution failed. No status received.");
-            }
-    
             return $data;
     
         } catch (\Exception $e) {
