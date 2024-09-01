@@ -28,7 +28,7 @@ Optionally, publish the configuration file
 php artisan vendor:publish --provider="Msilabs\Bkash\BkashServiceProvider"
 ```
 
-Set .env configuration
+Set up the environment configuration in your .env file:
 
 ```bash
 BKASH_SANDBOX=true  #for production use false
@@ -45,21 +45,24 @@ Start local server.
 php artisan serve
 ```
 
-To get create-payment data visit `/bkash-sandbox-validation/create-payment` url
+To validate create-payment visit `/bkash-sandbox-validation/create-payment` url
 
 ```
 http://127.0.0.1:8000/bkash-sandbox-validation/create-payment
 ```
 
-To get execute-payment data visit `/bkash-sandbox-validation/execute-payment` url
+To validate execute-payment visit `/bkash-sandbox-validation/execute-payment` url
 
 ```
 http://127.0.0.1:8000/bkash-sandbox-validation/execute-payment
 ```
 
-## Uses
+for multiple account see this: [Multiple Account](#multiple-account)
 
-included BkashPayment trait in your controller. like:
+## Usage
+
+Include the BkashPayment trait in your controller:
+
 ```
 use Msilabs\Bkash\BkashPayment;
 
@@ -111,7 +114,7 @@ public function callback(Request $request)
 
 ## Production Use
 
-set Live Credentials in .env
+Set live credentials in your .env file:
 
 ```bash
 BKASH_SANDBOX=false
@@ -123,7 +126,7 @@ BKASH_PASSWORD=""
 
 ## Multiple Account
 
-add account/s in config/bkash.php example: 
+Add multiple accounts in the **config/bkash.php** file. For example, to add `secondary` account:
 
 ```bash
 "accounts" => [
@@ -143,4 +146,34 @@ add account/s in config/bkash.php example:
     ],
     // Add more stores if you need
 ],
+```
+
+Set multiple credentials in your .env file:
+
+```bash
+BKASH_SANDBOX=false
+BKASH_APP_KEY=""
+BKASH_APP_SECRET=""
+BKASH_USERNAME=""
+BKASH_PASSWORD=""
+
+BKASH_SECONDARY_SANDBOX=false
+BKASH_SECONDARY_APP_KEY=""
+BKASH_SECONDARY_USERNAME=""
+BKASH_SECONDARY_USERNAME=""
+BKASH_SECONDARY_PASSWORD=""
+```
+
+## Multiple Sandbox validation : example 
+
+To validate **create-payment** for `secondary` account, visit the following URL:
+
+```
+http://127.0.0.1:8000/bkash-sandbox-validation/create-payment/secondary
+```
+
+To validate **execute-payment** for `secondary` account, visit the following URL:
+
+```
+http://127.0.0.1:8000/bkash-sandbox-validation/execute-payment/secondary
 ```
