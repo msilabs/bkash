@@ -22,6 +22,8 @@ trait BkashPayment
 
     protected function getFullUrl($url)
     {
+        $account = $this->getAccount();
+
         $base_url = config("bkash.accounts.{$account}.sandbox")
             ? config('bkash.sandbox_url')
             : config('bkash.base_url');
@@ -34,12 +36,7 @@ trait BkashPayment
 
     public function getToken()
     {
-        // Ensure the account is set before trying to get its config
         $account = $this->getAccount();
-    
-        if (!$account) {
-            throw new \ErrorException("No bKash account has been set.");
-        }
     
         try {
             $response = Http::acceptJson()
@@ -74,12 +71,7 @@ trait BkashPayment
 
     public function createPayment($amount, $invoice_number, $callback_url)
     {
-        // Ensure the account is set before trying to get its config
         $account = $this->getAccount();
-
-        if (!$account) {
-            throw new \ErrorException("No bKash account has been set.");
-        }
 
         try {
             $response = Http::acceptJson()
@@ -121,12 +113,7 @@ trait BkashPayment
 
     public function executePayment($payment_id)
     {
-        // Ensure the account is set before trying to get its config
         $account = $this->getAccount();
-
-        if (!$account) {
-            throw new \ErrorException("No bKash account has been set.");
-        }
 
         try {
             $response = Http::acceptJson()
