@@ -2,6 +2,7 @@
 
 namespace Msilabs\Bkash;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 trait BkashPayment
@@ -34,9 +35,16 @@ trait BkashPayment
         return $full_url;
     }
 
-    public function getToken()
+    public function getToken($fromCache = true)
     {
         $account = $this->getAccount();
+
+        // Check if the token is already cached
+        $cachedToken = Cache::get("bkash_token_{$account}");
+
+        if ($cachedToken && $fromCache) {
+            return $cachedToken;
+        }
     
         try {
             $response = Http::acceptJson()
@@ -60,6 +68,8 @@ trait BkashPayment
             if (!isset($data->id_token)) {
                 throw new \ErrorException("bKash token not found in the response.");
             }
+
+            Cache::put("bkash_token_{$account}", $data->id_token, 3600); // Cache the token for 1 hour
     
             return $data->id_token;
     
