@@ -2,6 +2,7 @@
 
 namespace Msilabs\Bkash;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 trait BkashPayment
@@ -23,22 +24,45 @@ trait BkashPayment
         return $full_url;
     }
 
-    public function getToken()
+    public function getToken($fromCache = true)
     {
-        $response = Http::acceptJson()
-            ->contentType('application/json')
-            ->withHeaders([
-                "username" => config('bkash.username'),
-                "password" => config('bkash.password'),
-            ])
-            ->post($this->getFullUrl("/tokenized/checkout/token/grant"), [
-                "app_key"       => config('bkash.app_key'),
-                "app_secret"    => config('bkash.app_secret'),
-            ]);
+        // Check if the token is already cached
+        $cachedToken = Cache::get("bkash_token}");
+
+        if ($cachedToken && $fromCache) {
+            return $cachedToken;
+        }
+
+        try {
+            $response = Http::acceptJson()
+                ->contentType('application/json')
+                ->withHeaders([
+                    "username" => config('bkash.username'),
+                    "password" => config('bkash.password'),
+                ])
+                ->post($this->getFullUrl("/tokenized/checkout/token/grant"), [
+                    "app_key"       => config('bkash.app_key'),
+                    "app_secret"    => config('bkash.app_secret'),
+                ]);
+        
+                        // Check if the response status is 200 (OK)
+            if (!$response->successful()) {
+                throw new \ErrorException("bKash API request failed with status code: " . $response->status());
+            }
     
-        $data = $response->object();
+            $data = $response->object();
     
-        return $data->id_token;
+            if (!isset($data->id_token)) {
+                throw new \ErrorException("bKash token not found in the response.");
+            }
+    
+            Cache::put("bkash_token", $data->id_token, 3600); // Cache the token for 1 hour
+        
+            return $data->id_token;
+        } catch (\Exception $e) {
+            // Handle any exceptions that may occur during the HTTP request
+            throw new \ErrorException("Error retrieving bKash token: " . $e->getMessage());
+        }
     }
 
     public function createPayment($amount, $invoice_number = null, $dynamic_callback_url = null)
