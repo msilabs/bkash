@@ -1,10 +1,14 @@
 {
   "name": "msilabs/bkash",
-  "description": "bKash Payment Gateway API for Laravel Framework.",
+  "description": "bKash Tokenized Checkout (v2) payment gateway for Laravel, with refund, query, agreement and multi-merchant support.",
   "keywords": [
     "bKash",
-    "bKash laravel",
+    "bkash laravel",
+    "bkash tokenized",
+    "bkash refund",
     "payment gateway",
+    "bangladesh",
+    "laravel",
     "laravel-package"
   ],
   "homepage": "https://github.com/msilabs/bkash",
@@ -21,20 +25,49 @@
     }
   ],
   "require": {
-    "php": "^7.4|^8.0|^8.1|^8.2|^8.3|^8.4",
-    "illuminate/support": "^6|^7|^8|^9|^10|^11|^12|^13"
+    "php": "^8.2",
+    "guzzlehttp/guzzle": "^7.2",
+    "illuminate/cache": "^9.0|^10.0|^11.0|^12.0|^13.0",
+    "illuminate/http": "^9.0|^10.0|^11.0|^12.0|^13.0",
+    "illuminate/log": "^9.0|^10.0|^11.0|^12.0|^13.0",
+    "illuminate/routing": "^9.0|^10.0|^11.0|^12.0|^13.0",
+    "illuminate/support": "^9.0|^10.0|^11.0|^12.0|^13.0"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.0",
+    "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0|^11.0",
+    "phpunit/phpunit": "^9.5|^10.5|^11.0|^12.0"
   },
   "autoload": {
     "psr-4": {
       "Msilabs\\Bkash\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Msilabs\\Bkash\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "format": "vendor/bin/pint"
+  },
   "extra": {
+    "branch-alias": {
+      "dev-3.x": "3.x-dev"
+    },
     "laravel": {
       "providers": [
         "Msilabs\\Bkash\\BkashServiceProvider"
-      ]
+      ],
+      "aliases": {
+        "Bkash": "Msilabs\\Bkash\\Facades\\Bkash"
+      }
     }
   },
-  "minimum-stability": "dev"
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

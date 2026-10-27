@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Msilabs\Bkash\Http\Controllers\BkashSandboxController;
 
-Route::get('/bkash-sandbox-validation/create-payment/{account?}', [BkashSandboxController::class, 'createSandboxPayment']);
-
-Route::get('/bkash-sandbox-validation/execute-payment/{account?}', [BkashSandboxController::class, 'executeSandboxPayment']);
+Route::prefix('bkash-sandbox')->name('bkash.sandbox.')->group(function () {
+    Route::get('create/{account?}', [BkashSandboxController::class, 'create'])->name('create');
+    Route::get('callback/{account?}', [BkashSandboxController::class, 'callback'])->name('callback');
+    Route::get('query/{paymentId}/{account?}', [BkashSandboxController::class, 'query'])->name('query');
+});
