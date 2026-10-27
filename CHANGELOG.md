@@ -25,7 +25,7 @@ Upgrading from 2.x? See [UPGRADE.md](UPGRADE.md).
 
 ### Changed
 
-- Requires PHP 8.2+ and Laravel 9+.
+- Requires PHP 8.2+ and Laravel 9.33+ (older 9.x releases allow a Carbon version that breaks on PHP 8.2).
 - bKash business errors (for example insufficient balance) now come back as a failed `BkashResponse` instead of an exception.
 - Sandbox validation routes moved to `/bkash-sandbox/*`. They are off by default and only work for sandbox accounts.
 - Unknown account names now throw `InvalidArgumentException` instead of silently falling back to `primary`.

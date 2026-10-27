@@ -54,7 +54,7 @@ return redirect($payment->redirectUrl());
 
 | Package | PHP | Laravel | bKash API |
 |---|---|---|---|
-| **3.x** | 8.2+ | 9, 10, 11, 12, 13 | Tokenized v2 |
+| **3.x** | 8.2+ | 9.33+, 10, 11, 12, 13 | Tokenized v2 |
 | 2.x | 7.4+ | 6+ | Tokenized v1.2.0-beta |
 
 ## Installation

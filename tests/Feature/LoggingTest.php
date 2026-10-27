@@ -3,12 +3,24 @@
 namespace Msilabs\Bkash\Tests\Feature;
 
 use Illuminate\Support\Facades\Log;
+use Monolog\Handler\TestHandler;
 use Msilabs\Bkash\Facades\Bkash;
 use Msilabs\Bkash\Tests\TestCase;
-use Psr\Log\LoggerInterface;
 
 class LoggingTest extends TestCase
 {
+    protected function defineEnvironment($app): void
+    {
+        parent::defineEnvironment($app);
+
+        $app['config']->set('logging.channels.bkash-test', [
+            'driver' => 'monolog',
+            'handler' => TestHandler::class,
+        ]);
+
+        $app['config']->set('bkash.log.channel', 'bkash-test');
+    }
+
     public function test_it_logs_with_secrets_masked(): void
     {
         config(['bkash.log.enabled' => true]);
@@ -16,20 +28,13 @@ class LoggingTest extends TestCase
 
         $this->fakeBkash(['payment/execute' => ['paymentId' => 'P1', 'transactionStatus' => 'Completed']]);
 
-        $logs = [];
-
-        $logger = $this->createStub(LoggerInterface::class);
-        $logger->method('info')->willReturnCallback(function ($message, $context) use (&$logs) {
-            $logs[] = compact('message', 'context');
-        });
-
-        Log::shouldReceive('channel')->andReturn($logger);
-
         Bkash::executePayment('P1');
 
-        $this->assertCount(2, $logs);
+        $records = $this->logHandler()->getRecords();
 
-        [$token, $execute] = $logs;
+        $this->assertCount(2, $records);
+
+        [$token, $execute] = $records;
 
         $this->assertSame('bKash [primary] auth/grant-token', $token['message']);
         $this->assertSame('********', $token['context']['headers']['password']);
@@ -48,8 +53,13 @@ class LoggingTest extends TestCase
     {
         $this->fakeBkash(['payment/execute' => ['transactionStatus' => 'Completed']]);
 
-        Log::shouldReceive('channel')->never();
-
         Bkash::executePayment('P1');
+
+        $this->assertCount(0, $this->logHandler()->getRecords());
+    }
+
+    protected function logHandler(): TestHandler
+    {
+        return Log::channel('bkash-test')->getLogger()->getHandlers()[0];
     }
 }

@@ -11,7 +11,7 @@ Estimated time: 15–30 minutes for a typical create/execute integration.
 | | 2.x | 3.x |
 |---|---|---|
 | PHP | 7.4+ | **8.2+** |
-| Laravel | 6+ | **9+** |
+| Laravel | 6+ | **9.33+** |
 | bKash API | v1.2.0-beta | **v2** |
 
 ### 2. Update Composer
