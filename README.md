@@ -5,7 +5,7 @@
   <a href="https://packagist.org/packages/msilabs/bkash"><img src="https://img.shields.io/github/stars/msilabs/bkash" alt="Github Stars"></a>
 </p>
 
-# msilas/bkash
+# msilabs/bkash
 
 bKash Payment Gateway API for Laravel Framework.
 
