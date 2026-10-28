@@ -34,7 +34,7 @@ class BkashResponse implements Arrayable, ArrayAccess, Jsonable, JsonSerializabl
             return false;
         }
 
-        if (isset($this->data['statusCode']) && $this->data['statusCode'] !== '0000') {
+        if (isset($this->data['statusCode']) && ! in_array($this->data['statusCode'], ['0000', 0], true)) {
             return false;
         }
 

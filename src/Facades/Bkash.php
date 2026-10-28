@@ -26,6 +26,7 @@ use Msilabs\Bkash\BkashManager;
  * @method static \Msilabs\Bkash\BkashResponse executePaymentWithAgreement(string $paymentId, string $agreementId)
  * @method static string token(bool $fresh = false)
  * @method static void forgetToken()
+ * @method static string name()
  * @method static bool isSandbox()
  * @method static string baseUrl()
  *

@@ -55,7 +55,7 @@ return redirect($payment->redirectUrl());
 | Package | PHP | Laravel | bKash API |
 |---|---|---|---|
 | **3.x** | 8.2+ | 9.33+, 10, 11, 12, 13 | Tokenized v2 |
-| 2.x | 7.4+ | 6+ | Tokenized v1.2.0-beta |
+| 2.x | 7.4+ | 7+ | Tokenized v1.2.0-beta |
 
 ## Installation
 
@@ -164,7 +164,10 @@ class BkashController extends Controller
             $result = Bkash::queryPayment($paymentId);
         }
 
-        if ($result->isCompleted() && (float) $result->amount === (float) $order->total) {
+        $paidAmount = number_format((float) $result->amount, 2, '.', '');
+        $orderAmount = number_format((float) $order->total, 2, '.', '');
+
+        if ($result->isCompleted() && $paidAmount === $orderAmount) {
             $order->update([
                 'status' => 'paid',
                 'bkash_trx_id' => $result->trxId,
@@ -438,7 +441,7 @@ BKASH_LOG=true
 BKASH_LOG_CHANNEL=bkash   # optional
 ```
 
-`app_secret`, `username`, `password`, `Authorization`, `id_token` and `refresh_token` are replaced with `********`.
+`app_secret`, `username`, `password`, `Authorization`, `id_token` and `refresh_token` are replaced with `********`. Customer wallet numbers (`customerMsisdn`, `payerAccount`) keep only their last 4 digits.
 
 An example dedicated channel in `config/logging.php`:
 

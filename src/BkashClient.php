@@ -3,6 +3,7 @@
 namespace Msilabs\Bkash;
 
 use Illuminate\Contracts\Cache\LockProvider;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -12,6 +13,8 @@ use Msilabs\Bkash\Exceptions\BkashException;
 class BkashClient
 {
     protected const SECRET_KEYS = ['app_secret', 'password', 'username', 'Authorization', 'id_token', 'refresh_token'];
+
+    protected const PHONE_KEYS = ['customerMsisdn', 'payerAccount'];
 
     /**
      * @param  array<string, mixed>  $credentials  sandbox, app_key, app_secret, username, password, base_url
@@ -199,14 +202,21 @@ class BkashClient
             return $this->obtainToken($fresh);
         }
 
-        return $store->lock($this->cacheKey('lock'), 15)->block(15, function () use ($fresh) {
-            // Another process may have fetched a token while we waited for the lock.
-            if (! $fresh && $token = $this->cache->get($this->cacheKey('id_token'))) {
-                return $token;
-            }
+        // Refresh and grant may both run while the lock is held, so it must outlive two HTTP timeouts.
+        $seconds = (int) ($this->options['timeout'] ?? 30) * 2 + 5;
 
-            return $this->obtainToken($fresh);
-        });
+        try {
+            return $store->lock($this->cacheKey('lock'), $seconds)->block($seconds, function () use ($fresh) {
+                // Another process may have fetched a token while we waited for the lock.
+                if (! $fresh && $token = $this->cache->get($this->cacheKey('id_token'))) {
+                    return $token;
+                }
+
+                return $this->obtainToken($fresh);
+            });
+        } catch (LockTimeoutException $e) {
+            throw new BkashException("Timed out waiting for the bKash token lock for account [{$this->name}].", previous: $e);
+        }
     }
 
     public function forgetToken(): void
@@ -363,6 +373,13 @@ class BkashClient
             }
         }
 
+        // Keep the last 4 digits so a payment can still be matched to a customer.
+        foreach (self::PHONE_KEYS as $key) {
+            if (isset($data[$key]) && is_scalar($data[$key])) {
+                $data[$key] = '*******'.substr((string) $data[$key], -4);
+            }
+        }
+
         return $data;
     }
 
@@ -375,7 +392,7 @@ class BkashClient
     {
         $prefix = $this->options['cache_prefix'] ?? 'bkash';
 
-        $identity = md5($this->baseUrl().'|'.$this->credentials['app_key'].'|'.$this->credentials['username']);
+        $identity = md5($this->baseUrl().'|'.($this->credentials['app_key'] ?? '').'|'.($this->credentials['username'] ?? ''));
 
         return "{$prefix}.{$this->name}.{$identity}.{$suffix}";
     }

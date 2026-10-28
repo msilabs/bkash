@@ -103,6 +103,14 @@ class TokenTest extends TestCase
         Bkash::token();
     }
 
+    public function test_it_throws_when_credential_keys_are_absent(): void
+    {
+        $this->expectException(BkashException::class);
+        $this->expectExceptionMessage('bKash account [custom] is missing [app_key].');
+
+        Bkash::using(['sandbox' => true])->token();
+    }
+
     public function test_forget_token_clears_cache(): void
     {
         $this->fakeBkash();

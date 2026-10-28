@@ -102,6 +102,13 @@ class PaymentTest extends TestCase
         $response->throw();
     }
 
+    public function test_integer_zero_status_code_is_successful(): void
+    {
+        $this->fakeBkash(['payment/execute' => ['statusCode' => 0, 'transactionStatus' => 'Completed']]);
+
+        $this->assertTrue(Bkash::executePayment('P1')->isCompleted());
+    }
+
     public function test_query_payment(): void
     {
         $this->fakeBkash(['query/payment' => ['paymentId' => 'P1', 'transactionStatus' => 'Completed', 'merchantInvoice' => 'INV-1']]);

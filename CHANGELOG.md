@@ -4,6 +4,19 @@ All notable changes to `msilabs/bkash` are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- The token cache lock now lasts long enough to cover a refresh and a grant request, so a second process can no longer request a token while the first is still waiting on bKash.
+- A timeout while waiting for the token lock now throws `BkashException` instead of `LockTimeoutException`.
+- Credentials with a missing `app_key` or `username` key now throw a clear `BkashException` instead of an "Undefined array key" error.
+- `BkashResponse::successful()` also accepts an integer `statusCode` of `0`.
+
+### Changed
+
+- Logs now mask customer wallet numbers (`customerMsisdn`, `payerAccount`) and keep only the last 4 digits.
+
 ## [3.1.0] - 2026-10-28
 
 ### Added
@@ -43,6 +56,25 @@ Upgrading from 2.x? See [UPGRADE.md](UPGRADE.md).
 - bKash v1.2.0-beta API support. Stay on 2.x if your merchant account only works with v1.2.0-beta.
 - Support for PHP < 8.2 and Laravel < 9.
 
+## [2.2.0] - 2026-10-28
+
+Last 2.x release (bKash v1.2.0-beta API).
+
+### Added
+
+- `queryPayment()` for the payment status API.
+
+### Fixed
+
+- Sandbox validation routes register only when an account is in sandbox mode (override with `BKASH_SANDBOX_ROUTES`), and reject live accounts.
+- The selected account is stored per instance instead of in a static property.
+- The token cache key includes the mode and credentials, the token expires from cache before bKash expires it, and requests retry once on HTTP 401.
+- Exception messages include the bKash `statusCode` and `statusMessage`.
+
+### Changed
+
+- Requires Laravel 7.0+. Laravel 6 never had the HTTP client.
+
 ## [2.1.1]
 
-- Last 2.x release (bKash v1.2.0-beta API).
+- bKash v1.2.0-beta API.

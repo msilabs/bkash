@@ -17,7 +17,7 @@ class BkashException extends RuntimeException
         parent::__construct($message, 0, $previous);
     }
 
-    public static function fromResponse(BkashResponse $response): static
+    public static function fromResponse(BkashResponse $response): self
     {
         $message = $response->errorMessage() ?? 'bKash request failed.';
 
@@ -25,6 +25,6 @@ class BkashException extends RuntimeException
             $message = "[{$response->errorCode()}] {$message}";
         }
 
-        return new static($message, $response->errorCode(), $response);
+        return new self($message, $response->errorCode(), $response);
     }
 }

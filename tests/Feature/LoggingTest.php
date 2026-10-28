@@ -26,7 +26,12 @@ class LoggingTest extends TestCase
         config(['bkash.log.enabled' => true]);
         Bkash::purge();
 
-        $this->fakeBkash(['payment/execute' => ['paymentId' => 'P1', 'transactionStatus' => 'Completed']]);
+        $this->fakeBkash(['payment/execute' => [
+            'paymentId' => 'P1',
+            'transactionStatus' => 'Completed',
+            'customerMsisdn' => '01712345678',
+            'payerAccount' => '01712345678',
+        ]]);
 
         Bkash::executePayment('P1');
 
@@ -47,6 +52,8 @@ class LoggingTest extends TestCase
         $this->assertSame('********', $execute['context']['headers']['Authorization']);
         $this->assertSame(['paymentId' => 'P1'], $execute['context']['request']);
         $this->assertSame('Completed', $execute['context']['response']['transactionStatus']);
+        $this->assertSame('*******5678', $execute['context']['response']['customerMsisdn']);
+        $this->assertSame('*******5678', $execute['context']['response']['payerAccount']);
     }
 
     public function test_it_does_not_log_when_disabled(): void
