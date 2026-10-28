@@ -12,7 +12,7 @@ bKash Payment Gateway API for Laravel Framework.
 ## Requirements
 
 - PHP >= 7.4
-- Laravel >= 6
+- Laravel >= 7
 
 ## Get Started
 
@@ -59,6 +59,8 @@ http://127.0.0.1:8000/bkash-sandbox-validation/execute-payment
 
 for multiple account see this: [Multiple Account](#multiple-account)
 
+> The sandbox validation routes are registered only when at least one account has `sandbox` enabled, and they only work for accounts in sandbox mode. To force them on or off, set `BKASH_SANDBOX_ROUTES=true` or `BKASH_SANDBOX_ROUTES=false` in your .env file.
+
 ## Usage
 
 Include the BkashPayment trait in your controller:
@@ -93,15 +95,15 @@ execute payment
 ```
 public function callback(Request $request)
 {
-  $payment_id = $request->paymentID;
+  $paymentID = $request->paymentID;
   $status = $request->status;
 
   if($paymentID && $status == 'success') {
       $response = $this->executePayment($paymentID);
 
-      if($response->transactionStatus == 'Completed') {
-          $order_id = $response['merchantInvoiceNumber'];
-          $trxID = $response['trxID'];
+      if(isset($response->transactionStatus) && $response->transactionStatus == 'Completed') {
+          $order_id = $response->merchantInvoiceNumber;
+          $trxID = $response->trxID;
 
           // your code
       }
@@ -109,6 +111,20 @@ public function callback(Request $request)
   }
 
   // your code
+}
+```
+
+query payment
+
+If `executePayment` throws (for example on a timeout) or returns no `transactionStatus`, check the payment status with `queryPayment` before marking the order as failed:
+
+```
+$response = $this->queryPayment($paymentID);
+
+if(isset($response->transactionStatus) && $response->transactionStatus == 'Completed') {
+    $trxID = $response->trxID;
+
+    // your code
 }
 ```
 
@@ -159,7 +175,7 @@ BKASH_PASSWORD=""
 
 BKASH_SECONDARY_SANDBOX=false
 BKASH_SECONDARY_APP_KEY=""
-BKASH_SECONDARY_USERNAME=""
+BKASH_SECONDARY_APP_SECRET=""
 BKASH_SECONDARY_USERNAME=""
 BKASH_SECONDARY_PASSWORD=""
 ```

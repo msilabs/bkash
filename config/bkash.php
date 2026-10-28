@@ -20,6 +20,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Sandbox validation routes
+    |--------------------------------------------------------------------------
+    |
+    | null  = enabled only when at least one account is in sandbox mode
+    | true  = always enabled
+    | false = always disabled
+    |
+    */
+
+    'sandbox_routes' => env('BKASH_SANDBOX_ROUTES'),
+
+    /*
+    |--------------------------------------------------------------------------
     | bKash accounts
     |--------------------------------------------------------------------------
     */
