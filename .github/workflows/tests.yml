@@ -1,0 +1,68 @@
+name: tests
+
+on:
+  push:
+    branches: [1.x]
+  pull_request:
+    branches: [1.x]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3']
+        laravel: ['7', '8', '9', '10']
+        stability: [prefer-lowest, prefer-stable]
+        include:
+          - laravel: '7'
+            testbench: '5'
+          - laravel: '8'
+            testbench: '6'
+          - laravel: '9'
+            testbench: '7'
+          - laravel: '10'
+            testbench: '8'
+        exclude:
+          - laravel: '7'
+            php: '8.1'
+          - laravel: '7'
+            php: '8.2'
+          - laravel: '7'
+            php: '8.3'
+          - laravel: '8'
+            php: '8.2'
+          - laravel: '8'
+            php: '8.3'
+          - laravel: '9'
+            php: '7.4'
+          - laravel: '9'
+            php: '8.3'
+          - laravel: '10'
+            php: '7.4'
+          - laravel: '10'
+            php: '8.0'
+
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.stability }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      # Older Laravel releases have published security advisories; allow them for testing only.
+      - name: Allow advisories for test install
+        run: composer config policy.advisories.block false
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:^${{ matrix.laravel }}.0" "orchestra/testbench:^${{ matrix.testbench }}.0" --dev --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction -W
+
+      - name: Run tests
+        run: vendor/bin/phpunit
