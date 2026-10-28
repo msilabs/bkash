@@ -85,7 +85,7 @@ class PaymentController extends Controller
 | `$response->bkashURL` | `$response->redirectUrl()` |
 | `$response->trxID` | `$response->trxId` |
 | `$response->transactionStatus == 'Completed'` | `$response->isCompleted()` |
-| `$response['merchantInvoiceNumber']` | unchanged |
+| `$response['merchantInvoiceNumber']` | `$response->invoiceNumber()` (Query Payment returns it as `merchantInvoice`) |
 
 Callback query parameters: read the payment ID with a fallback, since the casing can differ:
 

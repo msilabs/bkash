@@ -376,6 +376,7 @@ $response->successful();     // true if bKash returned no error
 $response->failed();         // opposite of successful()
 $response->isCompleted();    // transaction, agreement or refund status is "Completed"
 $response->redirectUrl();    // bKash page URL (create payment / agreement)
+$response->invoiceNumber();  // your invoice number (execute, query, ...)
 
 $response->errorCode();      // e.g. "2023"
 $response->errorMessage();   // e.g. "Insufficient Balance"

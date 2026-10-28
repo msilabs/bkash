@@ -16,7 +16,7 @@ Upgrading from 2.x? See [UPGRADE.md](UPGRADE.md).
 - Refund and refund status: `refund()`, `refundStatus()`.
 - Query and search: `queryPayment()`, `searchTransaction()`.
 - Agreement (one-click) payments: `createAgreement()`, `executeAgreement()`, `queryAgreement()`, `cancelAgreement()`, `createPaymentWithAgreement()`, `executePaymentWithAgreement()`.
-- `BkashResponse` object with `successful()`, `failed()`, `isCompleted()`, `redirectUrl()`, `errorCode()`, `errorMessage()`, `errorMessageBn()` and `throw()`.
+- `BkashResponse` object with `successful()`, `failed()`, `isCompleted()`, `redirectUrl()`, `invoiceNumber()`, `errorCode()`, `errorMessage()`, `errorMessageBn()` and `throw()`.
 - `BkashException` with `errorCode` and `response`.
 - Token refresh with the refresh token, a cache lock against concurrent token requests, and one automatic retry on HTTP 401.
 - Optional request and response logging, with secrets masked.

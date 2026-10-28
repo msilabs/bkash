@@ -71,6 +71,7 @@ class PaymentTest extends TestCase
 
         $this->assertTrue($response->isCompleted());
         $this->assertSame('TRX1', $response['trxId']);
+        $this->assertSame('INV-1', $response->invoiceNumber());
 
         Http::assertSent(fn (Request $request) => str_ends_with($request->url(), '/payment/execute')
             && $request->data() === ['paymentId' => 'P1']);
@@ -103,9 +104,12 @@ class PaymentTest extends TestCase
 
     public function test_query_payment(): void
     {
-        $this->fakeBkash(['query/payment' => ['paymentId' => 'P1', 'transactionStatus' => 'Completed']]);
+        $this->fakeBkash(['query/payment' => ['paymentId' => 'P1', 'transactionStatus' => 'Completed', 'merchantInvoice' => 'INV-1']]);
 
-        $this->assertTrue(Bkash::queryPayment('P1')->isCompleted());
+        $response = Bkash::queryPayment('P1');
+
+        $this->assertTrue($response->isCompleted());
+        $this->assertSame('INV-1', $response->invoiceNumber());
 
         Http::assertSent(fn (Request $request) => str_ends_with($request->url(), '/query/payment')
             && $request['paymentId'] === 'P1');

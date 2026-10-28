@@ -102,6 +102,14 @@ class BkashResponse implements Arrayable, ArrayAccess, Jsonable, JsonSerializabl
         return $this->data['bkashURL'] ?? $this->data['bKashURL'] ?? null;
     }
 
+    /**
+     * The merchant invoice number. Query Payment returns it as "merchantInvoice".
+     */
+    public function invoiceNumber(): ?string
+    {
+        return $this->data['merchantInvoiceNumber'] ?? $this->data['merchantInvoice'] ?? null;
+    }
+
     public function status(): int
     {
         return $this->status;
