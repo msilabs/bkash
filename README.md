@@ -1,9 +1,22 @@
 <p align="center">
-  <a href="https://packagist.org/packages/msilabs/bkash"><img src="https://img.shields.io/packagist/dt/msilabs/bkash" alt="Total Downloads"></a>
-  <a href="https://packagist.org/packages/msilabs/bkash"><img src="https://img.shields.io/packagist/v/msilabs/bkash" alt="Latest Stable Version"></a>
-  <a href="https://github.com/msilabs/bkash/actions/workflows/tests.yml"><img src="https://github.com/msilabs/bkash/actions/workflows/tests.yml/badge.svg?branch=3.x" alt="Tests"></a>
-  <a href="https://packagist.org/packages/msilabs/bkash"><img src="https://img.shields.io/packagist/l/msilabs/bkash" alt="License"></a>
-  <a href="https://github.com/msilabs/bkash"><img src="https://img.shields.io/github/stars/msilabs/bkash" alt="GitHub Stars"></a>
+  <a href="https://packagist.org/packages/msilabs/bkash">
+    <img src="https://img.shields.io/packagist/dt/msilabs/bkash" alt="Total Downloads">
+  </a>
+  <a href="https://packagist.org/packages/msilabs/bkash">
+    <img src="https://img.shields.io/packagist/v/msilabs/bkash" alt="Latest Stable Version">
+  </a>
+  <a href="https://github.com/msilabs/bkash/actions/workflows/tests.yml">
+    <img src="https://github.com/msilabs/bkash/actions/workflows/tests.yml/badge.svg?branch=3.x" alt="Tests">
+  </a>
+  <a href="https://badge.socket.dev/composer/package/msilabs/bkash/v2.1.1">
+    <img src="https://badge.socket.dev/composer/package/msilabs/bkash/v2.1.1" alt="Socket Security">
+  </a>
+  <a href="https://packagist.org/packages/msilabs/bkash">
+    <img src="https://img.shields.io/packagist/l/msilabs/bkash" alt="License">
+  </a>
+  <a href="https://github.com/msilabs/bkash">
+    <img src="https://img.shields.io/github/stars/msilabs/bkash" alt="GitHub Stars">
+  </a>
 </p>
 
 # msilabs/bkash
