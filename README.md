@@ -5,14 +5,14 @@
   <a href="https://packagist.org/packages/msilabs/bkash"><img src="https://img.shields.io/github/stars/msilabs/bkash" alt="Github Stars"></a>
 </p>
 
-# msilas/bkash
+# msilabs/bkash
 
 bKash Payment Gateway API for Laravel Framework.
 
 ## Requirements
 
 - PHP >=7.4
-- Laravel >= 6
+- Laravel 7 - 10
 
 ## Get Started
 
@@ -57,6 +57,8 @@ To get execute-payment data visit `/bkash-sandbox/execute-payment` url
 http://127.0.0.1:8000/bkash-sandbox/execute-payment
 ```
 
+> The sandbox routes are available only when `BKASH_SANDBOX=true`. To force them on or off, set `BKASH_SANDBOX_ROUTES=true` or `BKASH_SANDBOX_ROUTES=false` in your .env file.
+
 ## Sandbox Uses
 
 included BkashPayment trait in your controller. like:
@@ -80,7 +82,7 @@ public function payment()
 
   $response = $this->createPayment($amount, $invoice_id = null, $dynamic_callback_url = null);
 
-  if($response->bkashURL) {
+  if(isset($response->bkashURL)) {
     return redirect($response->bkashURL);
   }
 }
@@ -92,15 +94,15 @@ execute payment
 ```
 public function callback(Request $request)
 {
-  $payment_id = $request->paymentID;
+  $paymentID = $request->paymentID;
   $status = $request->status;
 
   if($paymentID && $status == 'success') {
       $response = $this->executePayment($paymentID);
 
-      if($response->transactionStatus == 'Completed') {
-          $order_id = $response['merchantInvoiceNumber'];
-          $trxID = $response['trxID'];
+      if(isset($response->transactionStatus) && $response->transactionStatus == 'Completed') {
+          $order_id = $response->merchantInvoiceNumber;
+          $trxID = $response->trxID;
 
           // your code
       }

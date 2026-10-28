@@ -12,15 +12,27 @@ class BkashSandboxController extends Controller
 
     public function createSandboxPayment()
     {
-        return $this->createPayment(10, null, url("/bkash-sandbox/execute-payment"));
+        $this->ensureSandbox();
+
+        return response()->json($this->createPayment(10, null, url("/bkash-sandbox/execute-payment")));
     }
 
     public function executeSandboxPayment()
     {
+        $this->ensureSandbox();
+
         if(!request()->paymentID) {
             return redirect($this->createPayment(10, null, url("/bkash-sandbox/execute-payment"))->bkashURL);
         }
 
-        return $this->executePayment(request()->paymentID);
+        return response()->json($this->executePayment(request()->paymentID));
+    }
+
+    private function ensureSandbox()
+    {
+        // Never let these public routes touch live credentials
+        if (!config('bkash.sandbox')) {
+            abort(404);
+        }
     }
 }
