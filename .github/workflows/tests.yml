@@ -13,42 +13,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2', '8.3']
-        laravel: ['7', '8', '9', '10']
-        stability: [prefer-lowest, prefer-stable]
         include:
-          - laravel: '7'
-            testbench: '5'
-          - laravel: '8'
-            testbench: '6'
-          - laravel: '9'
-            testbench: '7'
-          - laravel: '10'
-            testbench: '8'
-        exclude:
-          - laravel: '7'
-            php: '8.1'
-          - laravel: '7'
-            php: '8.2'
-          - laravel: '7'
-            php: '8.3'
-          - laravel: '8'
-            php: '8.2'
-          - laravel: '8'
-            php: '8.3'
-          - laravel: '9'
-            php: '7.4'
-          - laravel: '9'
-            php: '8.3'
-          - laravel: '10'
-            php: '7.4'
-          - laravel: '10'
-            php: '8.0'
+          - { php: '7.4', laravel: '7', testbench: '5', stability: prefer-stable }
+          - { php: '8.0', laravel: '7', testbench: '5', stability: prefer-stable }
+          - { php: '7.4', laravel: '8', testbench: '6', stability: prefer-stable }
+          - { php: '8.0', laravel: '8', testbench: '6', stability: prefer-stable }
+          - { php: '8.1', laravel: '8', testbench: '6', stability: prefer-stable }
+          - { php: '8.0', laravel: '9', testbench: '7', stability: prefer-stable }
+          - { php: '8.1', laravel: '9', testbench: '7', stability: prefer-stable }
+          - { php: '8.2', laravel: '9', testbench: '7', stability: prefer-stable }
+          - { php: '8.1', laravel: '10', testbench: '8', stability: prefer-stable }
+          - { php: '8.2', laravel: '10', testbench: '8', stability: prefer-stable }
+          - { php: '8.3', laravel: '10', testbench: '8', stability: prefer-stable }
+          # Lowest dependencies only on the oldest PHP each Laravel version supports,
+          # since old releases (e.g. Carbon) break on newer PHP versions.
+          - { php: '7.4', laravel: '7', testbench: '5', stability: prefer-lowest }
+          - { php: '7.4', laravel: '8', testbench: '6', stability: prefer-lowest }
+          - { php: '8.0', laravel: '9', testbench: '7', stability: prefer-lowest }
+          - { php: '8.1', laravel: '10', testbench: '8', stability: prefer-lowest }
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.stability }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
