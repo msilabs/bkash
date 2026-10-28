@@ -1,0 +1,69 @@
+name: tests
+
+on:
+  push:
+    branches: [2.x]
+  pull_request:
+    branches: [2.x]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Laravel 7's Http::fake() calls promise_for(), which guzzlehttp/promises 2.x removed.
+          - { php: '7.4', laravel: '7', testbench: '5', stability: prefer-stable, extra: 'guzzlehttp/promises:^1.5' }
+          - { php: '8.0', laravel: '7', testbench: '5', stability: prefer-stable, extra: 'guzzlehttp/promises:^1.5' }
+          - { php: '7.4', laravel: '8', testbench: '6', stability: prefer-stable }
+          - { php: '8.0', laravel: '8', testbench: '6', stability: prefer-stable }
+          - { php: '8.1', laravel: '8', testbench: '6', stability: prefer-stable }
+          - { php: '8.0', laravel: '9', testbench: '7', stability: prefer-stable }
+          - { php: '8.1', laravel: '9', testbench: '7', stability: prefer-stable }
+          - { php: '8.2', laravel: '9', testbench: '7', stability: prefer-stable }
+          - { php: '8.1', laravel: '10', testbench: '8', stability: prefer-stable }
+          - { php: '8.2', laravel: '10', testbench: '8', stability: prefer-stable }
+          - { php: '8.3', laravel: '10', testbench: '8', stability: prefer-stable }
+          - { php: '8.2', laravel: '11', testbench: '9', stability: prefer-stable }
+          - { php: '8.3', laravel: '11', testbench: '9', stability: prefer-stable }
+          - { php: '8.4', laravel: '11', testbench: '9', stability: prefer-stable }
+          - { php: '8.2', laravel: '12', testbench: '10', stability: prefer-stable }
+          - { php: '8.3', laravel: '12', testbench: '10', stability: prefer-stable }
+          - { php: '8.4', laravel: '12', testbench: '10', stability: prefer-stable }
+          - { php: '8.5', laravel: '12', testbench: '10', stability: prefer-stable }
+          - { php: '8.3', laravel: '13', testbench: '11', stability: prefer-stable }
+          - { php: '8.4', laravel: '13', testbench: '11', stability: prefer-stable }
+          - { php: '8.5', laravel: '13', testbench: '11', stability: prefer-stable }
+          # Lowest dependencies only on the oldest PHP each Laravel version supports,
+          # since old releases (e.g. Carbon) break on newer PHP versions.
+          - { php: '7.4', laravel: '7', testbench: '5', stability: prefer-lowest, extra: 'guzzlehttp/promises:^1.5' }
+          - { php: '7.4', laravel: '8', testbench: '6', stability: prefer-lowest }
+          - { php: '8.0', laravel: '9', testbench: '7', stability: prefer-lowest }
+          - { php: '8.1', laravel: '10', testbench: '8', stability: prefer-lowest }
+          - { php: '8.2', laravel: '11', testbench: '9', stability: prefer-lowest }
+          - { php: '8.2', laravel: '12', testbench: '10', stability: prefer-lowest }
+          - { php: '8.3', laravel: '13', testbench: '11', stability: prefer-lowest }
+
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.stability }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      # Older Laravel releases have published security advisories; allow them for testing only.
+      - name: Allow advisories for test install
+        run: composer config policy.advisories.block false
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:^${{ matrix.laravel }}.0" "orchestra/testbench:^${{ matrix.testbench }}.0" ${{ matrix.extra }} --dev --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction -W
+
+      - name: Run tests
+        run: vendor/bin/phpunit

@@ -24,9 +24,20 @@
     "php": "^7.4|^8.0",
     "illuminate/support": "^7.0|^8.0|^9.0|^10.0|^11.0|^12.0|^13.0"
   },
+  "require-dev": {
+    "guzzlehttp/guzzle": "^6.5.5|^7.2",
+    "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
+    "orchestra/testbench-core": "^5.9|^6.6|^7.0|^8.0|^9.0|^10.0|^11.0",
+    "phpunit/phpunit": "^9.5.10|^10.0|^11.0|^12.0"
+  },
   "autoload": {
     "psr-4": {
       "Msilabs\\Bkash\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Msilabs\\Bkash\\Tests\\": "tests/"
     }
   },
   "extra": {
