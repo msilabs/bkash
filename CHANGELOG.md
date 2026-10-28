@@ -4,7 +4,13 @@ All notable changes to `msilabs/bkash` are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
-## [3.0.0] - Unreleased
+## [3.1.0] - 2026-10-28
+
+### Added
+
+- `BkashResponse::invoiceNumber()` returns the merchant invoice number from both `merchantInvoiceNumber` (Execute Payment) and `merchantInvoice` (Query Payment).
+
+## [3.0.0] - 2026-10-28
 
 Upgrading from 2.x? See [UPGRADE.md](UPGRADE.md).
 
@@ -16,7 +22,7 @@ Upgrading from 2.x? See [UPGRADE.md](UPGRADE.md).
 - Refund and refund status: `refund()`, `refundStatus()`.
 - Query and search: `queryPayment()`, `searchTransaction()`.
 - Agreement (one-click) payments: `createAgreement()`, `executeAgreement()`, `queryAgreement()`, `cancelAgreement()`, `createPaymentWithAgreement()`, `executePaymentWithAgreement()`.
-- `BkashResponse` object with `successful()`, `failed()`, `isCompleted()`, `redirectUrl()`, `invoiceNumber()`, `errorCode()`, `errorMessage()`, `errorMessageBn()` and `throw()`.
+- `BkashResponse` object with `successful()`, `failed()`, `isCompleted()`, `redirectUrl()`, `errorCode()`, `errorMessage()`, `errorMessageBn()` and `throw()`.
 - `BkashException` with `errorCode` and `response`.
 - Token refresh with the refresh token, a cache lock against concurrent token requests, and one automatic retry on HTTP 401.
 - Optional request and response logging, with secrets masked.
