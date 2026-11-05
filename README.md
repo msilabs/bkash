@@ -8,7 +8,7 @@
   <a href="https://github.com/msilabs/bkash/actions/workflows/tests.yml">
     <img src="https://github.com/msilabs/bkash/actions/workflows/tests.yml/badge.svg?branch=3.x" alt="Tests">
   </a>
-  <a href="https://badge.socket.dev/composer/package/msilabs/bkash/v2.1.1">
+  <a href="https://socket.dev/composer/package/msilabs/bkash">
     <img src="https://badge.socket.dev/composer/package/msilabs/bkash/v2.1.1" alt="Socket Security">
   </a>
   <a href="https://packagist.org/packages/msilabs/bkash">
